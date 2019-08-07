@@ -1,1 +1,1 @@
-# full-stack-udacity
+# Log Analysis Project
