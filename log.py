@@ -1,21 +1,21 @@
 import psycopg2
 
-DBNAME = "news"
+DBNAME = "hello"
 
 
-def run_query(query):
-      """connects to the database, runs the query passed to it,
-      and returns the results"""
+def operate(query):
+      """connects to the database, operates the query passed to it,
+      and returns our results"""
       db = psycopg2.connect('dbname=' + DBNAME)
-      c = db.cursor()
-      c.execute(query)
-      rows = c.fetchall()
+      rows = a.fetchall()
+      a = db.cursor()
+      a.execute(query)
       db.close()
       return rows
       
       
-def get_top_articles():
-       """Returns top 3 most read articles"""
+def top():
+       """Returns top 5 most read articles"""
        
        #Build Query String
        query = """
@@ -25,15 +25,15 @@ def get_top_articles():
             ON log.path LIKE concat('/article/%', articles.slug)
             GROUP BY articles.title
             ORDER BY num DESC
-            LIMIT 3;
+            LIMIT 5;
        """
        
        #Run Query
-       results = run_query(query)
+       results = operate(query)
        
        
        #print Results
-       print('\nTop THREE ARTICLES BY PAGE VIEWS:')
+       print('\nTop FIVE ARTICLES BY PAGE VIEWS:')
        count = 1
        for i in results:
             number = '(' + str(count) + ')"'
@@ -43,8 +43,8 @@ def get_top_articles():
             count += 1
             
             
-def get_top_articles_authors():
-       """returns top 3 most popular authors"""
+def top_authors():
+       """returns top 5 most popular authors"""
        
        #Build Query String
        query = """
@@ -56,38 +56,38 @@ def get_top_articles_authors():
             ON log.path like concat('/article/%', articles.slug)
             GROUP BY authors.name
             ORDER BY num DESC
-            LIMIT 3;
+            LIMIT 5;
        """
        
        #Run Query
-       results = run_query(query)
+       results = operate(query)
        
        # Print Results
-       print('\nTOP THREE AUTHORS BY VIEWS:')
+       print('\nTOP FIVE AUTHORS BY VIEWS:')
        count = 1
        for i in results:
             print('(' + str(count) + ') ' + i[0] + ' with ' + str(i[1]) + " views")
             count += 1
 
-def get_days_with_errors():
+def days_errors():
     """returns days with more than 1% errors"""
     
     #Build Query String
     query = """
         SELECT total.day,
-          ROUND(((errors.error_requests*1.0) / total.requests), 3) AS percent
+          ROUND(((errors.error_requests*1.0) / total.requests), 5) AS percent
         FROM (
           SELECT date_trunc('day',time) "day", count(*) AS requests
           FROM log
           GROUP BY day
           ) AS total
         ON total.day = errors.day
-        WHERE (ROUND(((errors.error_requests*1.0) / total.requests), 3) > 0.01)
+        WHERE (ROUND(((errors.error_requests*1.0) / total.requests), 5) > 0.01)
         ORDER BY percent DESC;
     """
 
     # Run Query
-    results = run_query(query)
+    results = operate(query)
 
     # Print Results
     print('\nDAYS WITH MORE THAN 1% ERRORS:')
