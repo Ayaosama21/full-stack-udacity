@@ -1,3 +1,4 @@
+/*
 import psycopg2
 
 DBNAME = "hello"
@@ -102,5 +103,52 @@ top()
 top_authors()
 days_errors()
 © 2019 GitHub, Inc.
+*/
           
         
+#to connect the database
+
+import psycopg2        
+DBNAME = "news"
+# the most popular three articles of all times
+def most_popular__three__article():
+    db = psycopg2.connect(database=DBNAME)
+    c = db.cursor()
+    c.execute("""select articles.title, count(*) as num
+                  from articles join log on
+                  articles.slug=substr(log.path, 10)
+                  group by articles.title
+                  order by num desc limit 3;""")
+    return c.fetchall()
+    db.close()
+
+# the most popular article authors of all time
+def most_popular_article_authors():
+    db = psycopg2.connect(database=DBNAME)
+    c = db.cursor()
+    c.execute("""select authors.name, count(*) as numbers from articles join authors
+                        on authors.id=articles.author join log on log.path like
+                        concat('/article/', articles.slug) group by
+                        authors.name order by numbers desc;""")
+    out = c.fetchall()
+    for author , num in out:
+        print(" \"{}\" -- {} views".format(author, num))
+    print("-------------------------")
+
+
+# which days did more than 1% of requests lead to errors
+def errors_more_than_1%():
+    db = psycopg2.connect(database=DBNAME)
+    c = db.cursor()
+    c.execute("""select * from (select date(time),round(100.0*sum(case log.status
+                  when '200 OK'  then 0 else 1 end)/count(log.status),3) as error from log group
+                  by date(time) order by error desc) as subq where error > 1;""")
+    return c.fetchall()
+    db.close()
+
+
+
+
+
+if __name__ == '__main__':
+    
