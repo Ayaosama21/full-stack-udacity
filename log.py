@@ -40,7 +40,22 @@ def errors_more_than_1%():
 
 
 
+# display first query
+def dis_first():
+    dis_articles = most_popular__three__article()
+    for name, num in dis_articles:
+        print(" \"{}\" -- {} views".format(name, num))
+
+
+# display third query
+def dis_third():
+    dis_errors = errors_more_than_1%()
+    for day, percentage in dis_errors:
+        print("{0:%B %d, %Y} -- {1:.2f} % errors".format(day, percentage))
+
 
 
 if __name__ == '__main__':
-    
+    dis_first()
+    most_popular_article_authors()
+    dis_third()
