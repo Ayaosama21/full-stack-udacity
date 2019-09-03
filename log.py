@@ -29,7 +29,7 @@ def most_popular_article_authors():
 
 
 # which days did more than 1% of requests lead to errors
-def errors_more_than_1%():
+def errors_more_than_1_precentage():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute("""select * from (select date(time),round(100.0*sum(case log.status
@@ -49,7 +49,7 @@ def dis_first():
 
 # display third query
 def dis_third():
-    dis_errors = errors_more_than_1%()
+    dis_errors = errors_more_than_1_precentage()
     for day, percentage in dis_errors:
         print("{0:%B %d, %Y} -- {1:.2f} % errors".format(day, percentage))
 
