@@ -6,11 +6,12 @@ DBNAME = "news"
 def most_popular__three__article():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("""select articles.title, count(*) as num
-                  from articles join log on
-                  articles.slug=substr(log.path, 10)
-                  group by articles.title
-                  order by num desc limit 3;""")
+    c.execute("""SELECT TOP 3 title, Count(*) as articlesCount
+        FROM articles
+        join authors
+        on articles.ID = authors.ID
+        group by articles
+        ORDER BY articleCount DESC;""")
     return c.fetchall()
     db.close()
 
@@ -18,10 +19,12 @@ def most_popular__three__article():
 def most_popular_article_authors():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("""select authors.name, count(*) as numbers from articles join authors
-                        on authors.id=articles.author join log on log.path like
-                        concat('/article/', articles.slug) group by
-                        authors.name order by numbers desc;""")
+    c.execute("""SELECT AuthorName , count(*) as authorsCount
+        from authors
+        join articles
+        on articles.ID = authors.ID
+        group by AuthorName
+        order by authorsCount desc;""")
     out = c.fetchall()
     for author , num in out:
         print(" \"{}\" -- {} views".format(author, num))
@@ -32,9 +35,15 @@ def most_popular_article_authors():
 def errors_more_than_1_precentage():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("""select * from (select date(time),round(100.0*sum(case log.status
-                  when '200 OK'  then 0 else 1 end)/count(log.status),3) as error from log group
-                  by date(time) order by error desc) as subq where error > 1;""")
+    c.execute("""select * from
+                 (select date(time),round(100.0*sum(case log.status
+                  when '200 OK'  then 0 else 1 end)
+                  /count(log.status),3)
+                   as error from log 
+                   group by date(time) 
+                   order by error desc) as
+                    subq where 
+                    error > 1;""")
     return c.fetchall()
     db.close()
 
