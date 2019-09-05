@@ -33,6 +33,25 @@ using psycopg2 module to connect the database, our task is to create a tool to r
   
     $ vagrant ssh
       
-  3. 
+  3. change directory into /vagrant then using ls.
+  
+  
+#### Setting the Database:
 
+  1. use the command to load data:
+  
+    $ cd vagrant
+    $ psql -d news -f newsdata.sql
+  
+  2. to connect the database use this command :
+  
+    $ psql -d news
+    
+  3. you can create article view.
+  
+  
+#### Running our code:
 
+    1.to run log.py using :
+        
+        $python3 log.py
