@@ -31,7 +31,7 @@ using psycopg2 module to connect the database, our task is to create a tool to r
       
   2. log into using command:
   
-      $ vagrant ssh
+    $ vagrant ssh
       
   3. 
 
