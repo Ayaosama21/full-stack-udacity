@@ -9,12 +9,7 @@ DBNAME = "news"
 def most_popular__three__article():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("""SELECT TOP 3 title, Count(*) as articlesCount
-        FROM articles
-        join authors
-        on articles.ID = authors.ID
-        group by articles
-        ORDER BY articleCount DESC;""")
+    c.execute("""SELECT title FROM articles where articles.ID = authors.ID LIMIT 3;""")
 
     return c.fetchall()
     db.close()
