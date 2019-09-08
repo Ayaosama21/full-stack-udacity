@@ -9,7 +9,9 @@ DBNAME = "news"
 def most_popular__three__article():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
-    c.execute("""SELECT title FROM articles where articles.ID = authors.ID LIMIT 3;""")
+    c.execute("""SELECT title FROM articles ,count(*) as views
+                    from articles join log.path like concat('%',articles.slug)
+                    group by titles order by views desc LIMIT 3;""")
 
     return c.fetchall()
     db.close()
@@ -21,10 +23,11 @@ def most_popular_article_authors():
     db = psycopg2.connect(database=DBNAME)
     c = db.cursor()
     c.execute("""SELECT authors.name , count(*) as authorsCount
-        from authors
-        join articles
-        on articles.ID = authors.ID
-        group by authors
+        from articles
+        join authors
+        on articles.author = authors.ID
+        join log on log.path like concat('%',articles.slug)
+        group by authors.<name>
         order by authorsCount desc;""")
     out = c.fetchall()
     for author, num in out:
